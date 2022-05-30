@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.neppplus.a20220530_keepthetime.BaseActivity
-import com.neppplus.a20220530_keepthetime.MainActivity
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.databinding.ActivityLoginBinding
 import com.neppplus.a20220530_keepthetime.models.BasicResponse
