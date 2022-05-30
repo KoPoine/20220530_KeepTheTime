@@ -251,6 +251,13 @@ class SettingsFragment : BaseFragment() {
 
 //            Uri -> 이미지뷰의 사진 (GLide)
             Glide.with(mContext).load(dataUri).into(binding.profileImg)
+
+//            API 서버에 사진을 전송 => PUT 메쏘드 + ("/user/image")
+//            파일을 같이 첨부해야 => Multipart 형식의 데이터 첨부 활용 (기존 FromData와는 다르다!!)
+
+//            Uri -> File 형태로 변환 -> 그 파일의 실제 경로를 얻어낼 필요가 있다.
+
+
         }
     }
 }
