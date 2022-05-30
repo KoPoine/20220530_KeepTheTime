@@ -1,5 +1,7 @@
 package com.neppplus.a20220530_keepthetime.fragments
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.databinding.FragmentSettingsBinding
 import com.neppplus.a20220530_keepthetime.dialogs.CustomAlertDialog
@@ -46,9 +51,30 @@ class SettingsFragment : BaseFragment() {
         binding.profileImg.setOnClickListener {
 //            갤러리를 개발자가 이용 : 유저 허락을 받아야한다. => 권한 세팅
 //            TedPermission 라이브러리
+            val pl = object : PermissionListener {
+                override fun onPermissionGranted() {
+//                  권한 Ok
+                    val myIntent = Intent()
+
+//            갤러리로 사진을 가지러 이동(추가작업) => Intent (4)
+                    myIntent.action = Intent.ACTION_PICK
+                    myIntent.type = android.provider.MediaStore.Images.Media.CONTENT_TYPE
+
+                    startForResult.launch(myIntent)
+                }
+
+                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+//                    권한이 Denied
+
+                }
+
+            }
 
 //            권한이 OK 일때
-//            갤러리로 사진을 가지러 이동(추가작업) => Intent (3) / (4) 결합
+            TedPermission.create()
+                .setPermissionListener(pl)
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .check()
 
         }
 
@@ -210,5 +236,19 @@ class SettingsFragment : BaseFragment() {
 
 //        [연습문제] if 준비시간이 1시간이 넘을경우 -> x시간 x분으로 나타내보자.
         binding.readyTimeTxt.text = "${GlobalData.loginUser!!.readyMinute}분"
+    }
+
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+//            어떤 사진을 골랏는지? 파악해보자
+//            임시 : 고른 사진을 profileImg에 바로 적용만 (서버전송 X)
+
+//            data? => 이전 화면이 넘겨준 intent
+//            data?.data => 선택한 사진이 들어있는 경로 정보 (Uri)
+            val dataUri = it.data?.data
+
+//            Uri -> 이미지뷰의 사진 (GLide)
+            Glide.with(mContext).load(dataUri).into(binding.profileImg)
+        }
     }
 }
