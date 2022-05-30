@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.20220530_KeepTheTime">
         <activity
+            android:name=".ui.main.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
