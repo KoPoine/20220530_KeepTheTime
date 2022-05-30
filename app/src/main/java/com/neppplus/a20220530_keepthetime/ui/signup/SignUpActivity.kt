@@ -2,10 +2,16 @@ package com.neppplus.a20220530_keepthetime.ui.signup
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.databinding.ActivitySignUpBinding
+import com.neppplus.a20220530_keepthetime.models.BasicResponse
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SignUpActivity : BaseActivity() {
 
@@ -45,8 +51,28 @@ class SignUpActivity : BaseActivity() {
             }
         }
 
-        binding.emailDupBtn.setOnClickListener {  }
-        binding.nickDupBtn.setOnClickListener {  }
+        binding.emailDupBtn.setOnClickListener {
+            dupCheck("EMAIL", binding.emailEdt.text.toString())
+        }
+        binding.nickDupBtn.setOnClickListener {
+            dupCheck("NICK_NAME", binding.nickEdt.text.toString())
+        }
+
+        binding.emailEdt.addTextChangedListener {
+            isEmailDupOk = false
+        }
+
+        binding.nickEdt.addTextChangedListener {
+            isNickDupOk = false
+        }
+
+        binding.passwordEdt.addTextChangedListener {
+            isPwDupOk = (it.toString() == binding.pwDupEdt.text.toString())
+        }
+
+        binding.pwDupEdt.addTextChangedListener {
+            isPwDupOk = (it.toString() == binding.passwordEdt.text.toString())
+        }
     }
 
     override fun setValues() {
@@ -55,10 +81,38 @@ class SignUpActivity : BaseActivity() {
 
 //    실제로 모든 조건 통과시 실행할 회원 가입 API
     fun signUp() {
-
+        Toast.makeText(mContext, "회원가입", Toast.LENGTH_SHORT).show()
     }
 
     fun dupCheck(type : String, value : String) {
+        apiList.getRequestUserCheck(type, value).enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+                if (response.isSuccessful) {
+                    val br = response.body()!!
+                    Toast.makeText(mContext, br.message, Toast.LENGTH_SHORT).show()
 
+                    when (type) {
+                        "EMAIL" -> isEmailDupOk = true
+                        "NICK_NAME" -> isNickDupOk = true
+                    }
+                }
+                else {
+                    val errorBodyStr = response.errorBody()!!.string()
+                    val jsonObj = JSONObject(errorBodyStr)
+                    val message = jsonObj.getString("message")
+
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+
+                    when (type) {
+                        "EMAIL" -> isEmailDupOk = false
+                        "NICK_NAME" -> isNickDupOk = false
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+        })
     }
 }
