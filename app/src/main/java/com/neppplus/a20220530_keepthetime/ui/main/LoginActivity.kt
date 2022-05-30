@@ -47,7 +47,7 @@ class LoginActivity : BaseActivity() {
 
                         Toast.makeText(
                             mContext,
-                            "${GlobalData.loginUser!!.nick_name}님 환영합니다.",
+                            "${GlobalData.loginUser!!.nickname}님 환영합니다.",
                             Toast.LENGTH_SHORT
                         ).show()
 
