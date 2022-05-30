@@ -18,7 +18,13 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun setupEvents() {
+        binding.loginBtn.setOnClickListener {
 
+        }
+
+        binding.signUpBtn.setOnClickListener {
+
+        }
     }
 
     override fun setValues() {
