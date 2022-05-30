@@ -44,6 +44,11 @@ class SettingsFragment : BaseFragment() {
     override fun setupEvents() {
 //        프로필 이미지 변경 이벤트
         binding.profileImg.setOnClickListener {
+//            갤러리를 개발자가 이용 : 유저 허락을 받아야한다. => 권한 세팅
+//            TedPermission 라이브러리
+
+//            권한이 OK 일때
+//            갤러리로 사진을 가지러 이동(추가작업) => Intent (3) / (4) 결합
 
         }
 
