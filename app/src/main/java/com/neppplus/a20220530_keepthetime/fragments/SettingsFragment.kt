@@ -85,102 +85,166 @@ class SettingsFragment : BaseFragment() {
 
         }
 
-//        닉네임 변경 이벤트
-        binding.changeNickLayout.setOnClickListener {
-            val alert = CustomAlertDialog(mContext, requireActivity())
-            alert.myDialog()
+////        닉네임 변경 이벤트
+//        binding.changeNickLayout.setOnClickListener {
+//            val alert = CustomAlertDialog(mContext, requireActivity())
+//            alert.myDialog()
+//
+//            alert.binding.titleTxt.text = "닉네임 변경"
+//            alert.binding.bodyTxt.visibility = View.GONE
+//            alert.binding.contentEdt.hint = "변경할 닉네임을 입력해주세요."
+//            alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_TEXT
+//
+//            alert.binding.positiveBtn.setOnClickListener {
+//                apiList.patchRequestEditUserInfo(
+//                    "nickname",
+//                    alert.binding.contentEdt.text.toString()
+//                ).enqueue(object : Callback<BasicResponse>{
+//                    override fun onResponse(
+//                        call: Call<BasicResponse>,
+//                        response: Response<BasicResponse>
+//                    ) {
+//                        if (response.isSuccessful) {
+//                            val br = response.body()!!
+//
+//                            GlobalData.loginUser = br.data.user
+//
+//                            setUserData()
+//
+//                            alert.dialog.dismiss()
+//                        }
+////                        뭔가 중복된 닉네임과 같은 문제가 발생
+//                        else {
+//                            val errorBodyStr = response.errorBody()!!.string()
+//                            val jsonObj = JSONObject(errorBodyStr)
+//                            val message = jsonObj.getString("message")
+//
+//                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+//
+//                    }
+//                })
+//            }
+//            alert.binding.negativeBtn.setOnClickListener {
+//                alert.dialog.dismiss()
+//            }
+//
+//        }
+//
+////        외출 준비 시간 변경 이벤트
+//        binding.readyTimeLayout.setOnClickListener {
+//            val alert = CustomAlertDialog(mContext, requireActivity())
+//            alert.myDialog()
+//
+//            alert.binding.titleTxt.text = "준비 시간 설정"
+//            alert.binding.bodyTxt.visibility = View.GONE
+//            alert.binding.contentEdt.hint = "외출 준비에 몇 분 걸리는지"
+//            alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_NUMBER
+//
+//            alert.binding.positiveBtn.setOnClickListener {
+//                apiList.patchRequestEditUserInfo(
+//                    "ready_minute",
+//                    alert.binding.contentEdt.text.toString()
+//                ).enqueue(object : Callback<BasicResponse>{
+//                    override fun onResponse(
+//                        call: Call<BasicResponse>,
+//                        response: Response<BasicResponse>
+//                    ) {
+//                        if (response.isSuccessful) {
+//                            val br = response.body()!!
+//
+//                            GlobalData.loginUser = br.data.user
+//
+//                            setUserData()
+//
+//                            alert.dialog.dismiss()
+//                        }
+////                        뭔가 중복된 닉네임과 같은 문제가 발생
+//                        else {
+//                            val errorBodyStr = response.errorBody()!!.string()
+//                            val jsonObj = JSONObject(errorBodyStr)
+//                            val message = jsonObj.getString("message")
+//
+//                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+//
+//                    }
+//                })
+//            }
+//            alert.binding.negativeBtn.setOnClickListener {
+//                alert.dialog.dismiss()
+//            }
+//        }
 
-            alert.binding.titleTxt.text = "닉네임 변경"
-            alert.binding.bodyTxt.visibility = View.GONE
-            alert.binding.contentEdt.hint = "변경할 닉네임을 입력해주세요."
-            alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_TEXT
+        val ocl = object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                val type = p0!!.tag.toString()
 
-            alert.binding.positiveBtn.setOnClickListener {
-                apiList.patchRequestEditUserInfo(
-                    "nickname",
-                    alert.binding.contentEdt.text.toString()
-                ).enqueue(object : Callback<BasicResponse>{
-                    override fun onResponse(
-                        call: Call<BasicResponse>,
-                        response: Response<BasicResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            val br = response.body()!!
+                val alert = CustomAlertDialog(mContext, requireActivity())
+                alert.myDialog()
 
-                            GlobalData.loginUser = br.data.user
+                when (type) {
+                    "nickname" -> {
+                        alert.binding.titleTxt.text = "닉네임 변경"
+                        alert.binding.contentEdt.hint = "변경할 닉네임 입력"
+                        alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_TEXT
+                    }
+                    "ready_minute" -> {
+                        alert.binding.titleTxt.text = "준비 시간 설정"
+                        alert.binding.contentEdt.hint = "외출 준비에 몇 분 걸리는지"
+                        alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_NUMBER
+                    }
+                }
 
-                            setUserData()
+                alert.binding.bodyTxt.visibility = View.GONE
 
-                            alert.dialog.dismiss()
-                        }
+                alert.binding.positiveBtn.setOnClickListener {
+                    apiList.patchRequestEditUserInfo(
+                        type,
+                        alert.binding.contentEdt.text.toString()
+                    ).enqueue(object : Callback<BasicResponse> {
+                        override fun onResponse(
+                            call: Call<BasicResponse>,
+                            response: Response<BasicResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val br = response.body()!!
+
+                                GlobalData.loginUser = br.data.user
+
+                                setUserData()
+
+                                alert.dialog.dismiss()
+                            }
 //                        뭔가 중복된 닉네임과 같은 문제가 발생
-                        else {
-                            val errorBodyStr = response.errorBody()!!.string()
-                            val jsonObj = JSONObject(errorBodyStr)
-                            val message = jsonObj.getString("message")
+                            else {
+                                val errorBodyStr = response.errorBody()!!.string()
+                                val jsonObj = JSONObject(errorBodyStr)
+                                val message = jsonObj.getString("message")
 
-                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
 
-                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+                        override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
 
-                    }
-                })
+                        }
+                    })
+                }
+                alert.binding.negativeBtn.setOnClickListener {
+                    alert.dialog.dismiss()
+                }
             }
-            alert.binding.negativeBtn.setOnClickListener {
-                alert.dialog.dismiss()
-            }
-
         }
 
-//        외출 준비 시간 변경 이벤트
-        binding.readyTimeLayout.setOnClickListener {
-            val alert = CustomAlertDialog(mContext, requireActivity())
-            alert.myDialog()
-
-            alert.binding.titleTxt.text = "준비 시간 설정"
-            alert.binding.bodyTxt.visibility = View.GONE
-            alert.binding.contentEdt.hint = "외출 준비에 몇 분 걸리는지"
-            alert.binding.contentEdt.inputType = InputType.TYPE_CLASS_NUMBER
-
-            alert.binding.positiveBtn.setOnClickListener {
-                apiList.patchRequestEditUserInfo(
-                    "ready_minute",
-                    alert.binding.contentEdt.text.toString()
-                ).enqueue(object : Callback<BasicResponse>{
-                    override fun onResponse(
-                        call: Call<BasicResponse>,
-                        response: Response<BasicResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            val br = response.body()!!
-
-                            GlobalData.loginUser = br.data.user
-
-                            setUserData()
-
-                            alert.dialog.dismiss()
-                        }
-//                        뭔가 중복된 닉네임과 같은 문제가 발생
-                        else {
-                            val errorBodyStr = response.errorBody()!!.string()
-                            val jsonObj = JSONObject(errorBodyStr)
-                            val message = jsonObj.getString("message")
-
-                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
-
-                    }
-                })
-            }
-            alert.binding.negativeBtn.setOnClickListener {
-                alert.dialog.dismiss()
-            }
-        }
+        binding.changeNickLayout.setOnClickListener(ocl)
+        binding.readyTimeLayout.setOnClickListener(ocl)
 
 //        비밀번호 변경 이벤트
         binding.changePwLayout.setOnClickListener {
