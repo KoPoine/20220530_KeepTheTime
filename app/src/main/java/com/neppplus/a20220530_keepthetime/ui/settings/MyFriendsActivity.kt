@@ -43,7 +43,7 @@ class MyFriendsActivity : BaseActivity() {
         TabLayoutMediator(binding.tabLayout, binding.friendListViewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "내 친구 목록"
-                else -> tab.text = "친구 추가 요청청"
+                else -> tab.text = "친구 추가 요청"
            }
         }.attach()
     }
