@@ -1,5 +1,6 @@
 package com.neppplus.a20220530_keepthetime.ui.settings
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -36,7 +37,8 @@ class MyPlaceListActivity : BaseActivity() {
 
     override fun setupEvents() {
         addBtn.setOnClickListener {
-
+            val myIntent = Intent(mContext, EditMyPlaceActivity::class.java)
+            startActivity(myIntent)
         }
     }
 
