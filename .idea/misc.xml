@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/KMC/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/activity_my_friends.xml" value="0.27239583333333334" />
+        <entry key="..\:/Users/KMC/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/fragment_my_friends_list.xml" value="0.27239583333333334" />
+        <entry key="..\:/Users/KMC/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/fragment_request_friends_list.xml" value="0.27239583333333334" />
         <entry key="..\:/Users/NePPPlus_Teacher_01/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/activity_add_friends.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/NePPPlus_Teacher_01/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/activity_edit_my_place.xml" value="0.2907662082514735" />
         <entry key="..\:/Users/NePPPlus_Teacher_01/AndroidStudioProjects/20220530_KeepTheTime/app/src/main/res/layout/activity_login.xml" value="0.36614583333333334" />
@@ -24,7 +27,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
