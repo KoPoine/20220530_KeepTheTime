@@ -21,6 +21,7 @@ import com.neppplus.a20220530_keepthetime.dialogs.CustomAlertDialog
 import com.neppplus.a20220530_keepthetime.models.BasicResponse
 import com.neppplus.a20220530_keepthetime.ui.main.LoginActivity
 import com.neppplus.a20220530_keepthetime.ui.settings.MyFriendsActivity
+import com.neppplus.a20220530_keepthetime.ui.settings.MyPlaceListActivity
 import com.neppplus.a20220530_keepthetime.utils.ContextUtil
 import com.neppplus.a20220530_keepthetime.utils.GlobalData
 import com.neppplus.a20220530_keepthetime.utils.URIPathHelper
@@ -254,7 +255,8 @@ class SettingsFragment : BaseFragment() {
 
 //        출발 장소 변경 이벤트
         binding.myPlaceLayout.setOnClickListener {
-
+            val myIntent = Intent(mContext, MyPlaceListActivity::class.java)
+            startActivity(myIntent)
         }
 
 //        친구 목록 관리 이벤트

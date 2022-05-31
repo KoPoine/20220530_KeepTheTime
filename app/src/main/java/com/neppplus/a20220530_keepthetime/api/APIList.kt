@@ -48,4 +48,8 @@ interface APIList {
     @PUT("/user/image")
     fun putRequestUserImage(@Part profileImg : MultipartBody.Part) : Call<BasicResponse>
 
+
+//    user/place
+    @GET("/user/place")
+    fun getRequestMyPlace () : Call<BasicResponse>
 }
