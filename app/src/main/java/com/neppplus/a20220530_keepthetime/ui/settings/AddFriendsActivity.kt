@@ -68,7 +68,7 @@ class AddFriendsActivity : BaseActivity() {
 
     override fun setValues() {
 //        1. 어댑터 초기화 (init) => 빈 껍데기로
-        mFriendAdapter = MyFriendsRecyclerAdapter(mContext, mFriendList)
+        mFriendAdapter = MyFriendsRecyclerAdapter(mContext, mFriendList, "add")
         binding.findUserRecyclerView.adapter = mFriendAdapter
         binding.findUserRecyclerView.layoutManager = LinearLayoutManager(mContext)
     }
