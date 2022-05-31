@@ -45,7 +45,7 @@ class MyFriendsRecyclerAdapter(
                     addFriendBtn.visibility = View.VISIBLE
                     requestBtnLayout.visibility = View.GONE
                 }
-                "request" -> {
+                "requested" -> {
                     addFriendBtn.visibility = View.GONE
                     requestBtnLayout.visibility = View.VISIBLE
                 }
