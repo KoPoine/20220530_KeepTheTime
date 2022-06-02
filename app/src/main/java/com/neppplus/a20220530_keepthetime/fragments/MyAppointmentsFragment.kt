@@ -52,7 +52,7 @@ class MyAppointmentsFragment : BaseFragment() {
     }
 
     override fun setValues() {
-        mAppointAdapter = MyAppointmentRecyclerViewAdapter(mContext, mAppointmentList)
+        mAppointAdapter = MyAppointmentRecyclerViewAdapter(mContext, mAppointmentList, false)
         binding.myAppointmentRecyclerView.adapter = mAppointAdapter
         binding.myAppointmentRecyclerView.layoutManager = LinearLayoutManager(mContext)
     }
