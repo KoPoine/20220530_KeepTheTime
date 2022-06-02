@@ -1,13 +1,20 @@
 package com.neppplus.a20220530_keepthetime.ui.appointment
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.overlay.Marker
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.adapters.MyFriendSpinnerAdapter
@@ -30,13 +37,18 @@ class EditAppointmentActivity : BaseActivity() {
 //    선택한 약속 일시를 저장할 멤버변수
     val mSelectedDateTime = Calendar.getInstance()  // 기본값 : 현재시간
 
-//    출발 장소를 담고있는 Spinner 관련 변수
+//    출발 장소를 담고있는 관련 변수
     var mStartPlaceList = ArrayList<PlaceData>()
     lateinit var mStartPlaceSpinnerAdapter : StartPlaceSpinnerAdapter
+    lateinit var mSelectedStartPlace : PlaceData
 
 //    친구 목록을 담고 있는 Spinner 관련 변수
     var mFriendsList = ArrayList<UserData>()
     lateinit var mFriendsSpinnerAdapter: MyFriendSpinnerAdapter
+
+//    네이버 지도 관련 변수
+    var mNaverMap : NaverMap? = null
+    var mStartPlaceMarker = Marker()  // 출발지에 표시될 하나의 마커
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +59,7 @@ class EditAppointmentActivity : BaseActivity() {
         setValues()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setupEvents() {
 
 //            날짜 선택
@@ -98,6 +111,26 @@ class EditAppointmentActivity : BaseActivity() {
             ).show()
         }
 
+//        시작장소 스피너 선택 이벤트
+        binding.startPlaceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+//                Log.d("선택된 출발지 정보", position.toString())
+                mSelectedStartPlace = mStartPlaceList[position]
+
+                mNaverMap?.let {
+                    mStartPlaceMarker.position = LatLng(mSelectedStartPlace.latitude, mSelectedStartPlace.longitude)
+                    mStartPlaceMarker.map = mNaverMap
+
+                    val cameraUpdate = CameraUpdate.scrollTo(LatLng(mSelectedStartPlace.latitude, mSelectedStartPlace.longitude))
+                    it.moveCamera(cameraUpdate)
+                }
+
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
 
         binding.addBtn.setOnClickListener {
@@ -136,6 +169,17 @@ class EditAppointmentActivity : BaseActivity() {
 
 
         }
+
+//        지도 영역에 손을 대면(setOnTouch) => 스크롤뷰를 정지
+//        대안 : 지도위에 텍스트뷰를 겹쳐두고, 텍스트뷰에 손을 대면 => 스크롤뷰 정지
+        binding.scrollHelpTxt.setOnTouchListener { view, motionEvent ->
+
+            binding.scrollView.requestDisallowInterceptTouchEvent(true)
+
+//            터치 이벤트만 먹히게 할거냐? => no. 뒤에 가려진 지도 동작도 같이 실행
+            return@setOnTouchListener false
+        }
+
     }
 
     override fun setValues() {
@@ -151,7 +195,17 @@ class EditAppointmentActivity : BaseActivity() {
         getMyFriendsListFromServer()
 
         binding.mapView.getMapAsync {
-            val naverMap = it
+
+            if (mNaverMap == null) {
+                mNaverMap = it
+            }
+
+
+
+
+            it.setOnMapClickListener { pointF, latLng ->
+
+            }
         }
     }
 
