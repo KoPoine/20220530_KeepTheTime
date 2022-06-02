@@ -99,7 +99,23 @@ class EditAppointmentActivity : BaseActivity() {
             }
 
 //            3. 날짜/시간이 선택이 되었는가?
+//             =>날짜 / 기간 중 선택 안한게 있다면, 선택하라고 토스트 함수를 강제 종료하자.
+            if (binding.dateTxt.text == "일자 선택") {
+                Toast.makeText(mContext, "약속 일자를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (binding.timeTxt.text == "시간 선택") {
+                Toast.makeText(mContext, "약속 시간을 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
 //            지금시간과 선택된(mSelectedDateTime)과의 시간차를 계산
+            if (mSelectedDateTime.timeInMillis < Calendar.getInstance().timeInMillis) {
+                Toast.makeText(mContext, "현재 시간 이후의 시간으로 선택해 주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
 
         }
     }
