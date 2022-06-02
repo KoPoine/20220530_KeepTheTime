@@ -10,10 +10,12 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
+import com.neppplus.a20220530_keepthetime.adapters.MyFriendSpinnerAdapter
 import com.neppplus.a20220530_keepthetime.adapters.StartPlaceSpinnerAdapter
 import com.neppplus.a20220530_keepthetime.databinding.ActivityEditAppointmentBinding
 import com.neppplus.a20220530_keepthetime.models.BasicResponse
 import com.neppplus.a20220530_keepthetime.models.PlaceData
+import com.neppplus.a20220530_keepthetime.models.UserData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +33,11 @@ class EditAppointmentActivity : BaseActivity() {
 //    출발 장소를 담고있는 Spinner 관련 변수
     var mStartPlaceList = ArrayList<PlaceData>()
     lateinit var mStartPlaceSpinnerAdapter : StartPlaceSpinnerAdapter
+
+//    친구 목록을 담고 있는 Spinner 관련 변수
+    var mFriendsList = ArrayList<UserData>()
+    lateinit var mFriendsSpinnerAdapter: MyFriendSpinnerAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,7 +144,11 @@ class EditAppointmentActivity : BaseActivity() {
         mStartPlaceSpinnerAdapter = StartPlaceSpinnerAdapter(mContext, R.layout.list_item_place, mStartPlaceList)
         binding.startPlaceSpinner.adapter = mStartPlaceSpinnerAdapter
 
+        mFriendsSpinnerAdapter = MyFriendSpinnerAdapter(mContext, R.layout.list_item_user, mFriendsList)
+        binding.invitedFriendSpinner.adapter = mFriendsSpinnerAdapter
+
         getMyPlaceListFromServer()
+        getMyFriendsListFromServer()
 
         binding.mapView.getMapAsync {
             val naverMap = it
@@ -153,6 +164,24 @@ class EditAppointmentActivity : BaseActivity() {
                     mStartPlaceList.addAll(response.body()!!.data.places)
                     mStartPlaceSpinnerAdapter.notifyDataSetChanged()
 
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+        })
+    }
+
+    fun getMyFriendsListFromServer () {
+        apiList.getRequestMyFriendsList("my").enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+
+                if (response.isSuccessful) {
+                    mFriendsList.clear()
+                    mFriendsList.addAll(response.body()!!.data.friends)
+
+                    mFriendsSpinnerAdapter.notifyDataSetChanged()
                 }
             }
 
