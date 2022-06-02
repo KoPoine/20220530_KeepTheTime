@@ -6,6 +6,21 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface APIList {
+//    appointment
+    @FormUrlEncoded
+    @POST("/appointment")
+    fun postRequestAddAppointment(
+        @Field("title") title: String,
+        @Field("datetime") datetime: String,
+        @Field("start_place") startPlace: String,
+        @Field("start_latitude") startLatitude: Double,
+        @Field("start_longitude") startLongitude: Double,
+        @Field("place") place: String,
+        @Field("latitude") latitude: Double,
+        @Field("longitude") longitude: Double,
+        @Field("friend_list") friendList: String,
+    ): Call<BasicResponse>
+
 
 //    search
     @GET("/search/user")

@@ -175,7 +175,36 @@ class EditAppointmentActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
+            var friendListStr = ""
 
+//            서버에서 요구한 약속일시 양식대로 변환하여 전달
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
+
+            apiList.postRequestAddAppointment(
+                inputTitle,
+                sdf.format(mSelectedDateTime.time),
+                mSelectedStartPlace.name,
+                mSelectedStartPlace.latitude,
+                mSelectedStartPlace.longitude,
+                inputPlaceName,
+                mSelectedLatLng!!.latitude,
+                mSelectedLatLng!!.longitude,
+                friendListStr
+            ).enqueue(object : Callback<BasicResponse>{
+                override fun onResponse(
+                    call: Call<BasicResponse>,
+                    response: Response<BasicResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(mContext, "약속이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                        Log.d("현재 올린 약속 정보", response.body()!!.data.appointment.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+                }
+            })
 
         }
 
