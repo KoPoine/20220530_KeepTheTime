@@ -15,6 +15,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.adapters.MyFriendSpinnerAdapter
@@ -28,7 +29,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class EditAppointmentActivity : BaseActivity() {
 
@@ -49,6 +49,8 @@ class EditAppointmentActivity : BaseActivity() {
 //    네이버 지도 관련 변수
     var mNaverMap : NaverMap? = null
     var mStartPlaceMarker = Marker()  // 출발지에 표시될 하나의 마커
+    var mSelectedPlaceMarker = Marker()  // 도착지에 표시될 하나의 마커
+    var mSelectedLatLng : LatLng? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,7 +134,7 @@ class EditAppointmentActivity : BaseActivity() {
             }
         }
 
-
+//        약속 추가 이벤트
         binding.addBtn.setOnClickListener {
 
 //            1. 약속의 제목 정했는가
@@ -142,14 +144,7 @@ class EditAppointmentActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
-//            2. 약속 장소명을 정했는가?
-            val inputPlaceName = binding.placeNameTxt.text.toString()
-            if (inputPlaceName.isBlank()) {
-                Toast.makeText(mContext, "약속 장소명을 기입해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-//            3. 날짜/시간이 선택이 되었는가?
+//            2. 날짜/시간이 선택이 되었는가?
 //             =>날짜 / 기간 중 선택 안한게 있다면, 선택하라고 토스트 함수를 강제 종료하자.
             if (binding.dateTxt.text == "일자 선택") {
                 Toast.makeText(mContext, "약속 일자를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
@@ -166,6 +161,20 @@ class EditAppointmentActivity : BaseActivity() {
                 Toast.makeText(mContext, "현재 시간 이후의 시간으로 선택해 주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+//            3. 도착 지점을 선택했는가?
+            if (mSelectedLatLng == null) {
+                Toast.makeText(mContext, "도착지를 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+//            3-1. 장소명을 기록했는가?
+            val inputPlaceName = binding.placeNameEdt.text.toString()
+            if (inputPlaceName.isBlank()) {
+                Toast.makeText(mContext, "약속 장소명을 기입해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
 
 
         }
@@ -200,11 +209,15 @@ class EditAppointmentActivity : BaseActivity() {
                 mNaverMap = it
             }
 
-
-
+            mSelectedPlaceMarker.icon = OverlayImage.fromResource(R.drawable.red_marker)
 
             it.setOnMapClickListener { pointF, latLng ->
+                mSelectedLatLng = latLng
 
+                Log.d("선택된 좌표", "위도 : ${mSelectedLatLng?.latitude}, 경도 : ${mSelectedLatLng?.longitude}")
+
+                mSelectedPlaceMarker.position = latLng
+                mSelectedPlaceMarker.map = it
             }
         }
     }
