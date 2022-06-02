@@ -43,16 +43,6 @@ class MyFriendsRecyclerAdapter(
             Glide.with(mContext).load(item.profileImg).into(profileImg)
             nicknameTxt.text = item.nickname
 
-            when (item.provider) {
-                "kakao" -> {
-                    socialLoginImg.setImageResource(R.drawable.kakao_login_icon)
-                }
-                "facebook" -> {
-                    socialLoginImg.setImageResource(R.drawable.facebook_login_icon)
-                }
-                else -> {socialLoginImg.visibility = View.GONE}
-            }
-
             when (type) {
                 "add" -> {
                     addFriendBtn.visibility = View.VISIBLE
@@ -66,6 +56,16 @@ class MyFriendsRecyclerAdapter(
                     addFriendBtn.visibility = View.GONE
                     requestBtnLayout.visibility = View.GONE
                 }
+            }
+
+            when (item.provider) {
+                "kakao" -> {
+                    socialLoginImg.setImageResource(R.drawable.kakao_login_icon)
+                }
+                "facebook" -> {
+                    socialLoginImg.setImageResource(R.drawable.facebook_login_icon)
+                }
+                else -> {socialLoginImg.visibility = View.GONE}
             }
 
 //            수락 / 거절 버튼 둘다 하는 일이 동일 => type에 들어갈 값만 다르다
