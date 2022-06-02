@@ -6,10 +6,9 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.DatePicker
-import android.widget.TimePicker
-import android.widget.Toast
+import android.widget.*
+import androidx.core.view.marginStart
+import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -24,6 +23,7 @@ import com.neppplus.a20220530_keepthetime.databinding.ActivityEditAppointmentBin
 import com.neppplus.a20220530_keepthetime.models.BasicResponse
 import com.neppplus.a20220530_keepthetime.models.PlaceData
 import com.neppplus.a20220530_keepthetime.models.UserData
+import com.neppplus.a20220530_keepthetime.utils.SIzeUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,9 +42,10 @@ class EditAppointmentActivity : BaseActivity() {
     lateinit var mStartPlaceSpinnerAdapter : StartPlaceSpinnerAdapter
     lateinit var mSelectedStartPlace : PlaceData
 
-//    친구 목록을 담고 있는 Spinner 관련 변수
+//    친구 목록을 담고 있는 관련 변수
     var mFriendsList = ArrayList<UserData>()
     lateinit var mFriendsSpinnerAdapter: MyFriendSpinnerAdapter
+    var mSelectedFriendsList = ArrayList<UserData>()
 
 //    네이버 지도 관련 변수
     var mNaverMap : NaverMap? = null
@@ -134,6 +135,46 @@ class EditAppointmentActivity : BaseActivity() {
             }
         }
 
+//        친구 초대 버튼 클릭 이벤트처리
+        binding.invitedFriendBtn.setOnClickListener {
+//            지금 선택된 친구가 누구인지 확인 => 스피너의 선택되어있는 아이템의 포지션 확인
+            val selectedFriend = mFriendsList[binding.invitedFriendSpinner.selectedItemPosition]
+
+//            지금 선택된 친구가 이미 선택이 되었는지 확인
+            if (mSelectedFriendsList.contains(selectedFriend)) {
+                Toast.makeText(mContext, "이미 추가한 친구입니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+//            텍스트뷰 하나를 코틀린에서 생성
+             val textView = TextView(mContext)
+            textView.setBackgroundResource(R.drawable.lightgray_rectacgle_r6)
+
+//            텍스트뷰에 패딩을 설정
+            textView.setPadding(SIzeUtil.dpToPx(mContext, 5f).toInt())
+
+//            텍스트뷰에 마진 설정 [도전과제]
+
+
+            textView.text = selectedFriend.nickname
+
+//            만들어낸 텍스트뷰에 이벤트 처리
+            textView.setOnClickListener {
+                binding.friendListLayout.removeView(textView)
+                mSelectedFriendsList.remove(selectedFriend)
+
+                if (mSelectedFriendsList.size == 0) {
+                    binding.friendListLayout.visibility = View.GONE
+                }
+            }
+
+
+            binding.friendListLayout.visibility = View.VISIBLE
+            binding.friendListLayout.addView(textView)
+            mSelectedFriendsList.add(selectedFriend)
+
+        }
+
 //        약속 추가 이벤트
         binding.addBtn.setOnClickListener {
 
@@ -175,7 +216,19 @@ class EditAppointmentActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
+//            선택 한 친구 목록 => "1,3,4" 가공해서 첨부
             var friendListStr = ""
+
+//            friendListStr에 들어갈 String을 선택된 친구목록을 이용해 가공
+            for (friend in mSelectedFriendsList) {
+                friendListStr += friend.id
+                friendListStr += ","
+            }
+
+//            마지막 ,만 제거 => 글자가 0보다 커야 가능
+            if (friendListStr != "") {
+                friendListStr = friendListStr.substring(0, friendListStr.length -1)
+            }
 
 //            서버에서 요구한 약속일시 양식대로 변환하여 전달
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -199,7 +252,8 @@ class EditAppointmentActivity : BaseActivity() {
                 ) {
                     if (response.isSuccessful) {
                         Toast.makeText(mContext, "약속이 등록되었습니다.", Toast.LENGTH_SHORT).show()
-                        Log.d("현재 올린 약속 정보", response.body()!!.data.appointment.toString())
+//                        Log.d("현재 올린 약속 정보", response.body()!!.data.appointment.toString())
+                        finish()
                     }
                 }
 
