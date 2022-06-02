@@ -6,13 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.neppplus.a20220530_keepthetime.R
+import com.neppplus.a20220530_keepthetime.adapters.MyAppointmentRecyclerViewAdapter
 import com.neppplus.a20220530_keepthetime.databinding.FragmentMyAppointmentsBinding
+import com.neppplus.a20220530_keepthetime.models.AppointmentData
+import com.neppplus.a20220530_keepthetime.models.BasicResponse
 import com.neppplus.a20220530_keepthetime.ui.appointment.EditAppointmentActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MyAppointmentsFragment : BaseFragment() {
 
     lateinit var binding : FragmentMyAppointmentsBinding
+
+    lateinit var mAppointAdapter : MyAppointmentRecyclerViewAdapter
+    var mAppointmentList = ArrayList<AppointmentData>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +46,33 @@ class MyAppointmentsFragment : BaseFragment() {
         }
     }
 
-    override fun setValues() {
+    override fun onResume() {
+        super.onResume()
+        getMyAppointmentListFromServer()
+    }
 
+    override fun setValues() {
+        mAppointAdapter = MyAppointmentRecyclerViewAdapter(mContext, mAppointmentList)
+        binding.myAppointmentRecyclerView.adapter = mAppointAdapter
+        binding.myAppointmentRecyclerView.layoutManager = LinearLayoutManager(mContext)
+    }
+
+    fun getMyAppointmentListFromServer() {
+        apiList.getRequestMyAppointment().enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+                if (response.isSuccessful) {
+                    val br = response.body()!!
+                    mAppointmentList.clear()
+                    mAppointmentList.addAll(br.data.appointments)
+
+                    mAppointAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+        })
     }
 
 }
