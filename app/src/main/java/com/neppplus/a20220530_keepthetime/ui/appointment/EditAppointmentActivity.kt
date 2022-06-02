@@ -10,9 +10,16 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
+import com.neppplus.a20220530_keepthetime.adapters.StartPlaceSpinnerAdapter
 import com.neppplus.a20220530_keepthetime.databinding.ActivityEditAppointmentBinding
+import com.neppplus.a20220530_keepthetime.models.BasicResponse
+import com.neppplus.a20220530_keepthetime.models.PlaceData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class EditAppointmentActivity : BaseActivity() {
 
@@ -20,6 +27,10 @@ class EditAppointmentActivity : BaseActivity() {
 
 //    선택한 약속 일시를 저장할 멤버변수
     val mSelectedDateTime = Calendar.getInstance()  // 기본값 : 현재시간
+
+//    출발 장소를 담고있는 Spinner 관련 변수
+    var mStartPlaceList = ArrayList<PlaceData>()
+    lateinit var mStartPlaceSpinnerAdapter : StartPlaceSpinnerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,8 +134,31 @@ class EditAppointmentActivity : BaseActivity() {
     override fun setValues() {
         titleTxt.text = "새 약속 만들기"
 
+        mStartPlaceSpinnerAdapter = StartPlaceSpinnerAdapter(mContext, R.layout.list_item_place, mStartPlaceList)
+        binding.startPlaceSpinner.adapter = mStartPlaceSpinnerAdapter
+
+        getMyPlaceListFromServer()
+
         binding.mapView.getMapAsync {
             val naverMap = it
         }
+    }
+
+    fun getMyPlaceListFromServer () {
+        apiList.getRequestMyPlace().enqueue(object : Callback<BasicResponse>{
+            override fun onResponse(call: Call<BasicResponse>, response: Response<BasicResponse>) {
+                if (response.isSuccessful) {
+
+                    mStartPlaceList.clear()
+                    mStartPlaceList.addAll(response.body()!!.data.places)
+                    mStartPlaceSpinnerAdapter.notifyDataSetChanged()
+
+                }
+            }
+
+            override fun onFailure(call: Call<BasicResponse>, t: Throwable) {
+
+            }
+        })
     }
 }
