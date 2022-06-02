@@ -1,16 +1,25 @@
 package com.neppplus.a20220530_keepthetime.ui.appointment
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.neppplus.a20220530_keepthetime.BaseActivity
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.databinding.ActivityEditAppointmentBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EditAppointmentActivity : BaseActivity() {
 
     lateinit var binding : ActivityEditAppointmentBinding
+
+//    선택한 약속 일시를 저장할 멤버변수
+    val mSelectedDateTime = Calendar.getInstance()  // 기본값 : 현재시간
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +30,58 @@ class EditAppointmentActivity : BaseActivity() {
     }
 
     override fun setupEvents() {
+
+//            날짜 선택
+        binding.dateTxt.setOnClickListener {
+//            날짜를 선택하고 할 일(인터페이스)를 작성
+            val dl = object : DatePickerDialog.OnDateSetListener{
+                override fun onDateSet(p0: DatePicker?, year: Int, month: Int, day: Int) {
+                    mSelectedDateTime.set(year, month, day)
+
+                    val sdf = SimpleDateFormat("yyyy. M. d (E)")
+                    Log.d("선택된 시간", sdf.format(mSelectedDateTime.time))
+
+                    binding.dateTxt.text = sdf.format(mSelectedDateTime.time)
+                }
+            }
+
+//            DatePickerDialog 팝업
+             val dpd = DatePickerDialog(
+                 mContext,
+                 dl,
+                 mSelectedDateTime.get(Calendar.YEAR),
+                 mSelectedDateTime.get(Calendar.MONTH),
+                 mSelectedDateTime.get(Calendar.DAY_OF_MONTH)
+             )
+
+            dpd.show()
+        }
+
+//            시간 선택
+        binding.timeTxt.setOnClickListener {
+            val tsl = object : TimePickerDialog.OnTimeSetListener{
+                override fun onTimeSet(p0: TimePicker?, hour: Int, minute: Int) {
+                    mSelectedDateTime.set(Calendar.HOUR_OF_DAY, hour)
+                    mSelectedDateTime.set(Calendar.MINUTE, minute)
+
+//                    오후 12:10 형태로 가공
+                    val sdf = SimpleDateFormat("a h:mm")
+                    binding.timeTxt.text = sdf.format(mSelectedDateTime.time)
+
+                }
+            }
+
+            TimePickerDialog(
+                mContext,
+                tsl,
+                mSelectedDateTime.get(Calendar.HOUR_OF_DAY),
+                mSelectedDateTime.get(Calendar.MINUTE),
+                false
+            ).show()
+        }
+
+
+
         binding.addBtn.setOnClickListener {
 
 //            1. 약속의 제목 정했는가
@@ -37,10 +98,8 @@ class EditAppointmentActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
-//            날짜 선택
-
-
-//            시간 선택
+//            3. 날짜/시간이 선택이 되었는가?
+//            지금시간과 선택된(mSelectedDateTime)과의 시간차를 계산
 
         }
     }
