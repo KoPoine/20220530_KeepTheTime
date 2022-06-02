@@ -297,8 +297,12 @@ class SettingsFragment : BaseFragment() {
         setUserData()
 
         when (GlobalData.loginUser!!.provider) {
-            "kakao" -> {}
-            "facebook" -> {}
+            "kakao" -> {
+                binding.socialLoginImg.setImageResource(R.drawable.kakao_login_icon)
+            }
+            "facebook" -> {
+                binding.socialLoginImg.setImageResource(R.drawable.facebook_login_icon)
+            }
             else -> binding.socialLoginImg.visibility = View.GONE
         }
     }
