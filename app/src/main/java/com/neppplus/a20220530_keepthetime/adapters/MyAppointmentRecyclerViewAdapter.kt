@@ -16,6 +16,8 @@ class MyAppointmentRecyclerViewAdapter (
     val isInvited : Boolean
         ) : RecyclerView.Adapter<MyAppointmentRecyclerViewAdapter.ItemViewHolder>() {
 
+
+
     inner class ItemViewHolder (val binding : ListItemAppointmentBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item : AppointmentData) {
 
