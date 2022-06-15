@@ -18,6 +18,7 @@
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/lightgray_rectacgle_r6"
             app:menu="@menu/bottom_nav_menu"/>
 
     </LinearLayout>

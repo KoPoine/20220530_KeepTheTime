@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.neppplus.a20220530_keepthetime.R
 import com.neppplus.a20220530_keepthetime.api.APIList
 import com.neppplus.a20220530_keepthetime.api.ServerApi
+import com.neppplus.a20220530_keepthetime.databinding.ListItemUserBinding
 import com.neppplus.a20220530_keepthetime.fragments.RequestFriendsListFragment
 import com.neppplus.a20220530_keepthetime.models.BasicResponse
 import com.neppplus.a20220530_keepthetime.models.UserData
@@ -26,46 +27,38 @@ class MyFriendsRecyclerAdapter(
     val type : String
 ) : RecyclerView.Adapter<MyFriendsRecyclerAdapter.ItemViewHolder>() {
 
-    inner class ItemViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-
-        val profileImg = view.findViewById<ImageView>(R.id.profileImg)
-        val nicknameTxt = view.findViewById<TextView>(R.id.nicknameTxt)
-        val addFriendBtn = view.findViewById<Button>(R.id.addFriendBtn)
-        val acceptBtn = view.findViewById<Button>(R.id.acceptBtn)
-        val denyBtn = view.findViewById<Button>(R.id.denyBtn)
-        val requestBtnLayout = view.findViewById<LinearLayout>(R.id.requestBtnLayout)
-        val socialLoginImg = view.findViewById<ImageView>(R.id.socialLoginImg)
+    inner class ItemViewHolder(val binding : ListItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind (item : UserData) {
 
             val apiList = ServerApi.getRetrofit(mContext).create(APIList::class.java)
 
-            Glide.with(mContext).load(item.profileImg).into(profileImg)
-            nicknameTxt.text = item.nickname
+            Glide.with(mContext).load(item.profileImg).into(binding.profileImg)
+            binding.nicknameTxt.text = item.nickname
 
             when (type) {
                 "add" -> {
-                    addFriendBtn.visibility = View.VISIBLE
-                    requestBtnLayout.visibility = View.GONE
+                    binding.addFriendBtn.visibility = View.VISIBLE
+                    binding.requestBtnLayout.visibility = View.GONE
                 }
                 "requested" -> {
-                    addFriendBtn.visibility = View.GONE
-                    requestBtnLayout.visibility = View.VISIBLE
+                    binding.addFriendBtn.visibility = View.GONE
+                    binding.requestBtnLayout.visibility = View.VISIBLE
                 }
                 "my" -> {
-                    addFriendBtn.visibility = View.GONE
-                    requestBtnLayout.visibility = View.GONE
+                    binding.addFriendBtn.visibility = View.GONE
+                    binding.requestBtnLayout.visibility = View.GONE
                 }
             }
 
             when (item.provider) {
                 "kakao" -> {
-                    socialLoginImg.setImageResource(R.drawable.kakao_login_icon)
+                    binding.socialLoginImg.setImageResource(R.drawable.kakao_login_icon)
                 }
                 "facebook" -> {
-                    socialLoginImg.setImageResource(R.drawable.facebook_login_icon)
+                    binding.socialLoginImg.setImageResource(R.drawable.facebook_login_icon)
                 }
-                else -> {socialLoginImg.visibility = View.GONE}
+                else -> {binding.socialLoginImg.visibility = View.GONE}
             }
 
 //            수락 / 거절 버튼 둘다 하는 일이 동일 => type에 들어갈 값만 다르다
@@ -109,10 +102,10 @@ class MyFriendsRecyclerAdapter(
                 }
             }
 
-            acceptBtn.setOnClickListener(ocl)
-            denyBtn.setOnClickListener(ocl)
+            binding.acceptBtn.setOnClickListener(ocl)
+            binding.denyBtn.setOnClickListener(ocl)
 
-            addFriendBtn.setOnClickListener {
+            binding.addFriendBtn.setOnClickListener {
                 apiList.postRequestAddFriend(item.id).enqueue(object : Callback<BasicResponse>{
                     override fun onResponse(
                         call: Call<BasicResponse>,
@@ -136,8 +129,7 @@ class MyFriendsRecyclerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val row = LayoutInflater.from(mContext).inflate(R.layout.list_item_user, parent, false)
-        return ItemViewHolder(row)
+        return ItemViewHolder(ListItemUserBinding.inflate(LayoutInflater.from(mContext), parent, false))
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

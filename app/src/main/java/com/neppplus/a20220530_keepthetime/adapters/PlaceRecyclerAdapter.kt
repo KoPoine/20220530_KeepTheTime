@@ -15,9 +15,7 @@ class PlaceRecyclerAdapter(
     val mList : List<PlaceData>
 ) : RecyclerView.Adapter<PlaceRecyclerAdapter.ItemViewHolder>() {
 
-    lateinit var binding : ListItemPlaceBinding
-
-    inner class ItemViewHolder (itemView : View) : RecyclerView.ViewHolder(itemView) {
+    inner class ItemViewHolder (val binding : ListItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind (item : PlaceData) {
             binding.placeNameTxt.text = item.name
@@ -33,8 +31,7 @@ class PlaceRecyclerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.list_item_place, parent, false)
-        return ItemViewHolder(binding.root)
+        return ItemViewHolder(ListItemPlaceBinding.inflate(LayoutInflater.from(mContext), parent, false))
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
