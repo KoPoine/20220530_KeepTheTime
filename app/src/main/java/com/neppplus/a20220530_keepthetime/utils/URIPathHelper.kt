@@ -5,20 +5,15 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import androidx.annotation.RequiresApi
 
 class URIPathHelper {
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     fun getPath(context: Context, uri: Uri): String? {
-        val isKitKatorAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-
         // DocumentProvider
-        if (isKitKatorAbove && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
@@ -61,13 +56,13 @@ class URIPathHelper {
         val column = "_data"
         val projection = arrayOf(column)
         try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,null)
+            cursor = context.contentResolver.query(uri, projection, selection, selectionArgs,null)
             if (cursor != null && cursor.moveToFirst()) {
                 val column_index: Int = cursor.getColumnIndexOrThrow(column)
                 return cursor.getString(column_index)
             }
         } finally {
-            if (cursor != null) cursor.close()
+            cursor?.close()
         }
         return null
     }
